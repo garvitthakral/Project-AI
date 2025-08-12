@@ -3,6 +3,7 @@ import api from "../../src/API/axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Loader from "../../components/Loader";
+import ErrorMessage from "../../components/ErrorMessage";
 
 export default function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
@@ -66,18 +67,18 @@ export default function ResumeAnalyzer() {
       />
     </label>
 
-    <button
-      onClick={handleAnalyze}
-      disabled={loading}
-      className="w-full py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 font-semibold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-    >
+    {loading ? <Loader /> : (
+      <button
+        onClick={handleAnalyze}
+        disabled={loading}
+        className="w-full py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 font-semibold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+      >
       {loading ? "Analyzing..." : "Analyze Resume"}
     </button>
+    )}
 
     {error && (
-      <p className="text-red-400 mt-4 text-center bg-red-500/10 p-3 rounded-lg border border-red-500/30">
-        {error}
-      </p>
+      <ErrorMessage message={error} />
     )}
 
     {analysis && (
