@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import careerChatbotRoutes from "./routes/careerChatbotRoutes.js";
 import analyzeResume from "./routes/resumeAnalyzerRutes.js";
+import readmeRoutes from "./routes/readmeRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use("/api/career-chatbot", careerChatbotRoutes);
 app.use("/api/resume-analyzer", analyzeResume);
+app.use("/api/readme-generator", readmeRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);
