@@ -1,12 +1,16 @@
 import express from "express";
+import http from "http";
 import cors from "cors";
 import dotenv from "dotenv";
 import careerChatbotRoutes from "./routes/careerChatbotRoutes.js";
 import analyzeResume from "./routes/resumeAnalyzerRutes.js";
 import readmeRoutes from "./routes/readmeRoutes.js";
+import { connectToSockets } from "./util/Servers.js";
 
 dotenv.config();
 const app = express();
+const server = http.createServer(app);
+const io = connectToSockets(server);
 
 app.use(
   cors({

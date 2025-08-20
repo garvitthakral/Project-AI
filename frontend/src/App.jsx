@@ -1,13 +1,23 @@
 import React from 'react'
-import CareerChatbot from '../pages/CareerChatbot/CareerChatbot'
-import ResumeAnalyzer from '../pages/ResumeAnalyzer/ResumeAnalyzer'
+import ResumeAnalyzer from './pages/ResumeAnalyzer/ResumeAnalyzer'
+import { Routes, Route } from 'react-router-dom'
+import BeforeReadme from './pages/ReadmeGen/BeforeReadme'
+import Readme from './pages/ReadmeGen/Readme'
+import CareerChatbot from './pages/CareerChatbot/CareerChatbot'
+import Landing from './pages/Landing/Landing'
+import Navbar from './components/Navbar'
 
 const App = () => {
   return (
     <div>
-      hiiii
-      {/* <CareerChatbot /> */}
-      <ResumeAnalyzer />
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/career-chatbot" element={<CareerChatbot />} />
+        <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+        <Route path="/readme-gen" element={<BeforeReadme />} />
+        <Route path="/readme-gen/:id" element={<Readme />} />
+      </Routes>
     </div>
   )
 }

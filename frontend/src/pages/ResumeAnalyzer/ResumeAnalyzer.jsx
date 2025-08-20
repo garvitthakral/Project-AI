@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../src/API/axios";
+import api from "../../API/axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Loader from "../../components/Loader";
@@ -45,8 +45,8 @@ export default function ResumeAnalyzer() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6 flex items-center justify-center">
-  <div className="w-full max-w-6xl bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700 p-8 text-gray-200">
+    <div className="fixed inset-0 min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6 flex items-center justify-center z-0">
+  <div className="top-0 w-full max-w-6xl bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700 p-8 text-gray-200">
     <h1 className="text-3xl font-extrabold mb-6 text-center bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
       Resume Analyzer
     </h1>

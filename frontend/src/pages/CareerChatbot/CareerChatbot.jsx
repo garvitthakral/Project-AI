@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../src/API/axios.js";
+import api from "../../API/axios.js";
 import Loader from "../../components/Loader.jsx";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -28,7 +28,7 @@ const CareerChatbot = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="fixed inset-0 min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6 flex items-center justify-center z-0">
       <div className="w-full max-w-6xl backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-xl p-6">
         <h1 className="text-3xl font-bold mb-2 text-center">Career Chatbot</h1>
         <p className="text-gray-300 text-center mb-6">
