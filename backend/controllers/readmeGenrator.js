@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs-extra";
 import simpleGit from "simple-git";
 import openai from "../aiApi/openAiApi.js";
+import { getIO } from "../util/Servers.js";
 
 const TEMP_DIR = path.join(process.cwd(), "temp_repo");
 
@@ -23,6 +24,9 @@ function isAllowedFile(filePath) {
 
 // main function to generate README
 export async function scanRepoLocal(req, res) {
+  getIO().emit("Readme-Status", {
+    message: "Starting the Process",
+  });
   console.log("entered scanRepoLocal");
   const git = simpleGit();
 
@@ -34,6 +38,9 @@ export async function scanRepoLocal(req, res) {
   try {
     //taking out repo information
     console.log("getting names");
+    getIO().emit("Readme-Status", {
+      message: "fetching repository name",
+    });
     const repoName = repoUrl
       .split("/")
       .pop()
@@ -41,15 +48,27 @@ export async function scanRepoLocal(req, res) {
     const repoOwner = repoUrl.split("/")[repoUrl.split("/").length - 2];
 
     console.log("getting repo paths");
+    getIO().emit("Readme-Status", {
+      message: "Checking Paths😌",
+    });
     const repoPath = path.join(TEMP_DIR, `${repoOwner}-${repoName}`);
     await fs.ensureDir(TEMP_DIR); //making sure the folder is created
 
     // clone the repository
     console.log("cloning repository");
+    getIO().emit("Readme-Status", {
+      message: "Cloning of Repo Starts🚀",
+    });
     await git.clone(repoUrl, repoPath, ["--depth", "1"]);
+    getIO().emit("Readme-Status", {
+      message: "Cloning of Repo finish🎉",
+    });
 
     const filesData = [];
 
+    getIO().emit("Readme-Status", {
+      message: "Reading Files 🧑‍🏫",
+    });
     async function walk(dir) {
       console.log("entered in walk");
       const files = await fs.readdir(dir);
@@ -68,6 +87,9 @@ export async function scanRepoLocal(req, res) {
           if (isAllowedFile(fullPath) && stat.size < 100 * 1024) {
             // 100 KB limit
             const content = await fs.readFile(fullPath, "utf8");
+            getIO().emit("Readme-Status", {
+      message: "File Read",
+    });
             console.log("pushing file");
             filesData.push({
               path: path.relative(repoPath, fullPath),
@@ -94,6 +116,9 @@ export async function scanRepoLocal(req, res) {
       "controllers",
     ];
     console.log("filtering important files");
+    getIO().emit("Readme-Status", {
+      message: "Filtering Important files: 📁",
+    });
     const importantFiles = filesData.filter((file) =>
       importantPatterns.some(
         (pattern) =>
@@ -104,6 +129,9 @@ export async function scanRepoLocal(req, res) {
     );
 
     console.log("generating prompts");
+    getIO().emit("Readme-Status", {
+      message: "starting generating Readme File: 🥰",
+    });
     const systemPrompt = `You are an expert software documentation generator. Generate a detailed README for   the following structured section:
       🌟 Key Features
       🛠️ Tech Stack
@@ -121,7 +149,10 @@ export async function scanRepoLocal(req, res) {
         .map((f) => `File: ${f.path}\nContent:\n${f.content}`)
         .join("\n\n")}`;
 
-        console.log("sending request to OpenAI");
+    console.log("sending request to OpenAI");
+    getIO().emit("Readme-Status", {
+      message: "Please wait while we are generating the readme 🙏",
+    });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -133,12 +164,21 @@ export async function scanRepoLocal(req, res) {
     });
 
     console.log("received response from OpenAI");
+    getIO().emit("Readme-Status", {
+      message: "Finishing up Readme",
+    });
     const generatedReadme =
       completion.choices[0].message.content || "README generation failed.";
 
     await fs.remove(repoPath);
+    getIO().emit("Readme-Status", {
+      message: "cleaning up the cloned Repo 🧹",
+    });
 
     console.log("cleaned up temporary files");
+    getIO().emit("Readme-Status", {
+      message: "Finish ✨",
+    });
     res.status(200).json({ repoOwner, repoName, generatedReadme });
   } catch (err) {
     console.error("Error scanning repo locally:", err);

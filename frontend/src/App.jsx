@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ResumeAnalyzer from './pages/ResumeAnalyzer/ResumeAnalyzer'
 import { Routes, Route } from 'react-router-dom'
 import BeforeReadme from './pages/ReadmeGen/BeforeReadme'
@@ -6,6 +6,7 @@ import Readme from './pages/ReadmeGen/Readme'
 import CareerChatbot from './pages/CareerChatbot/CareerChatbot'
 import Landing from './pages/Landing/Landing'
 import Navbar from './components/Navbar'
+import socketApi from './API/SocketApi'
 
 const App = () => {
   return (

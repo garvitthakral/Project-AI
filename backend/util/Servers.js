@@ -1,7 +1,9 @@
 import { Server } from "socket.io";
 
+let io;
+
 const connectToSockets = (server) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     cors: {
       origin: ["http://localhost:5173"],
       methods: ["GET", "POST"],
@@ -16,3 +18,8 @@ const connectToSockets = (server) => {
 };
 
 export { connectToSockets };
+
+export const getIO = () => {
+  if (!io) throw new Error("Socket.io not initialized yet");
+  return io;
+};
