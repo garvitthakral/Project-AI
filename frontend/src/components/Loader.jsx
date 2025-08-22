@@ -5,6 +5,7 @@ const SIZE_MAP = {
   sm: 48,
   md: 80,
   lg: 120,
+  xl: 160,
 };
 
 

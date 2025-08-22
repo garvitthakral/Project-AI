@@ -7,10 +7,10 @@ import { getIO } from "../util/Servers.js";
 const TEMP_DIR = path.join(process.cwd(), "temp_repo");
 
 // to check if the file is extensions are one of the allowed ones.
-function isTextFile(filepath) {
-  console.log("entered isTextFile");
-  const textExtensions = /\.(md|js|ts|py|java|go|json|yml|yaml|txt|html|css)$/i;
-  return textExtensions.test(filepath);
+function ismessageFile(filepath) {
+  console.log("entered ismessageFile");
+  const messageExtensions = /\.(md|js|ts|py|java|go|json|yml|yaml|txt|html|css)$/i;
+  return messageExtensions.test(filepath);
 }
 
 // to check if the file is big or not
@@ -19,13 +19,15 @@ function isAllowedFile(filePath) {
   if (filePath.includes("node_modules") || filePath.includes(".git"))
     return false;
   if (filePath.includes("__tests__") || filePath.includes("spec")) return false;
-  return isTextFile(filePath);
+  return ismessageFile(filePath);
 }
 
 // main function to generate README
 export async function scanRepoLocal(req, res) {
-  getIO().emit("Readme-Status", {
+  const { id } = req.body;
+  getIO().to(id).emit("Readme-Status", {
     message: "Starting the Process",
+    tone: "info"
   });
   console.log("entered scanRepoLocal");
   const git = simpleGit();
@@ -38,8 +40,9 @@ export async function scanRepoLocal(req, res) {
   try {
     //taking out repo information
     console.log("getting names");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "fetching repository name",
+      tone: "info"
     });
     const repoName = repoUrl
       .split("/")
@@ -48,26 +51,30 @@ export async function scanRepoLocal(req, res) {
     const repoOwner = repoUrl.split("/")[repoUrl.split("/").length - 2];
 
     console.log("getting repo paths");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Checking Paths😌",
+      tone: "ok"
     });
     const repoPath = path.join(TEMP_DIR, `${repoOwner}-${repoName}`);
     await fs.ensureDir(TEMP_DIR); //making sure the folder is created
 
     // clone the repository
     console.log("cloning repository");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Cloning of Repo Starts🚀",
+      tone: "info"
     });
     await git.clone(repoUrl, repoPath, ["--depth", "1"]);
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Cloning of Repo finish🎉",
+      tone: "ok"
     });
 
     const filesData = [];
 
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Reading Files 🧑‍🏫",
+      tone: "info"
     });
     async function walk(dir) {
       console.log("entered in walk");
@@ -87,9 +94,6 @@ export async function scanRepoLocal(req, res) {
           if (isAllowedFile(fullPath) && stat.size < 100 * 1024) {
             // 100 KB limit
             const content = await fs.readFile(fullPath, "utf8");
-            getIO().emit("Readme-Status", {
-      message: "File Read",
-    });
             console.log("pushing file");
             filesData.push({
               path: path.relative(repoPath, fullPath),
@@ -116,8 +120,9 @@ export async function scanRepoLocal(req, res) {
       "controllers",
     ];
     console.log("filtering important files");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Filtering Important files: 📁",
+      tone: "info"
     });
     const importantFiles = filesData.filter((file) =>
       importantPatterns.some(
@@ -129,8 +134,9 @@ export async function scanRepoLocal(req, res) {
     );
 
     console.log("generating prompts");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "starting generating Readme File: 🥰",
+      tone: "info"
     });
     const systemPrompt = `You are an expert software documentation generator. Generate a detailed README for   the following structured section:
       🌟 Key Features
@@ -150,8 +156,9 @@ export async function scanRepoLocal(req, res) {
         .join("\n\n")}`;
 
     console.log("sending request to OpenAI");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Please wait while we are generating the readme 🙏",
+      tone: "warn"
     });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -164,20 +171,23 @@ export async function scanRepoLocal(req, res) {
     });
 
     console.log("received response from OpenAI");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Finishing up Readme",
+      tone: "ok"
     });
     const generatedReadme =
       completion.choices[0].message.content || "README generation failed.";
 
     await fs.remove(repoPath);
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "cleaning up the cloned Repo 🧹",
+      tone: "warn"
     });
 
     console.log("cleaned up temporary files");
-    getIO().emit("Readme-Status", {
+    getIO().to(id).emit("Readme-Status", {
       message: "Finish ✨",
+      tone: "ok"
     });
     res.status(200).json({ repoOwner, repoName, generatedReadme });
   } catch (err) {

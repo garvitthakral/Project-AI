@@ -13,6 +13,11 @@ const connectToSockets = (server) => {
   });
   io.on("connection", (socket) => {
     console.log("New socket connection:", socket.id);
+
+    socket.on("joinRoom", (id) => {
+      socket.join(id);
+      console.log(`Socket ${socket.id} joined room ${id}`);
+    });
   });
   return io;
 };
