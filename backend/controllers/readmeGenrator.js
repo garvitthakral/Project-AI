@@ -160,6 +160,11 @@ export async function scanRepoLocal(req, res) {
       message: "Please wait while we are generating the readme 🙏",
       tone: "warn"
     });
+    getIO().to(id).emit("Readme-Status", {
+      message: "here is User Prompt",
+      content: userPrompt,
+      tone: "warn"
+    });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -176,7 +181,7 @@ export async function scanRepoLocal(req, res) {
       tone: "ok"
     });
     const generatedReadme =
-      completion.choices[0].message.content || "README generation failed.";
+    completion.choices[0].message.content || "README generation failed.";
 
     await fs.remove(repoPath);
     getIO().to(id).emit("Readme-Status", {
