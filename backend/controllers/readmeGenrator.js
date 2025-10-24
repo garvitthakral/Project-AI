@@ -28,7 +28,7 @@ function isAllowedFile(filePath) {
 // main function to generate README
 export async function scanRepoLocal(req, res) {
   const { id } = req.body;
-  const workingPath = "";
+  let workingPath = "";
   getIO().to(id).emit("Readme-Status", {
     message: "Starting the Process",
     tone: "info",

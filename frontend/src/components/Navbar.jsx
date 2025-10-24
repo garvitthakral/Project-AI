@@ -13,6 +13,8 @@ import {
   Code2,
   Briefcase,
   NotebookPen,
+  House
+  
 } from "lucide-react";
 
 /**
@@ -35,6 +37,7 @@ import {
  */
 
 const FEATURES = [
+  { label: "Home", href: "/", Icon: House },
   { label: "Career Chatbot", href: "career-chatbot", Icon: MessageCircle },
   { label: "Resume Analyzer", href: "resume-analyzer", Icon: FileCheck },
   { label: "GitHub README Gen", href: "readme-gen", Icon: Github },
