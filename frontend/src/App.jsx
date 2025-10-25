@@ -7,6 +7,7 @@ import CareerChatbot from './pages/CareerChatbot/CareerChatbot'
 import Landing from './pages/Landing/Landing'
 import Navbar from './components/Navbar'
 import socketApi from './API/SocketApi'
+import BeforeBreakdown from './pages/Breakdown/BeforeBreakdown'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
         <Route path="/readme-gen" element={<BeforeReadme />} />
         <Route path="/readme-gen/:id" element={<Readme />} />
+        <Route path="/goal-breakdown" element={<BeforeBreakdown />} />
       </Routes>
     </div>
   )
