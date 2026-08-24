@@ -25,7 +25,7 @@ const breakdownGoal = async (req, res) => {
           role: "system",
           content: `You are a strict classifier. 
           Output JSON with fields: "isCoding" (true/false) and "reason" (string).
-          Mark isCoding=true ONLY if the goal is about:
+          Mark isCoding=true ONLY if the goal is about to do with any of the following:
           - coding, programming, app/web/software development,
           - AI/ML, DevOps, cloud, data engineering, or learning to code.
           Everything else should be isCoding=false.`,
